@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-pod
+  labels:
+    name: redis-pod
+    app: loterry-app
+spec:
+  containers:
+    - name: redis-pod
+      image: narunask/loterry-app:redis
+      ports:
+        - containerPort: 6379

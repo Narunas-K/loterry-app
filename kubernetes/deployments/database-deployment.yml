@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-deployment
+  labels:
+    name: database-deployment
+    app: loterry-app
+spec:
+  template:
+    metadata:
+      name: database-pod
+      labels:
+        name: database-pod
+        app: loterry-app
+    spec:
+      containers:
+        - name: database-pod
+          image: narunask/loterry-app:database
+          ports:
+            - containerPort: 5432
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loterry-app
+      name: database-pod

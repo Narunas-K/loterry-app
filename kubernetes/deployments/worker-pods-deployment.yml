@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-pod-deployment
+  labels:
+    name: worker-pod-deployment
+    app: loterry-app
+spec:
+  template:
+    metadata:
+      name: worker-pod
+      labels:
+        name: worker-pod
+        app: loterry-app
+    spec:
+      initContainers:
+        - name: check-db-ready
+          image: postgres:latest
+          command: ['sh', '-c', 'until pg_isready -h appdb -p 5432; do echo waiting for database; sleep 2; done;']
+        - name: check-redis-ready
+          image: redis:latest
+          command: ['sh', '-c', 'until redis-cli -h redis -p 6379 ping; do echo waiting for redis; sleep 2; done;']
+      containers:
+        - name: worker-pod
+          image: narunask/loterry-app:worker
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4242
+  replicas: 3
+  selector:
+    matchLabels:
+      name: worker-pod
+      app: loterry-app

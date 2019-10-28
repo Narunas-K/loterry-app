@@ -1,0 +1,12 @@
+    {
+      "dependencies": {
+        "express": "*",
+        "ioredis": "*",
+        "zerorpc": "*",
+        "express-validator": "*",
+        "popups": "*"
+      },
+      "scripts": {
+        "start": "node index.js"
+      }
+    }

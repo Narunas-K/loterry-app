@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: python
+  labels:
+    name: python-service
+    app: loterry-app
+spec:
+  selector:
+    name: worker-pod
+    app: loterry-app
+  ports:
+    - port: 4242
+      targetPort: 4242
+
