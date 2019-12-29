@@ -1,0 +1,242 @@
+apiVersion: v1
+data:
+  load-balancer.conf: "# Define which servers to include in the load balancing scheme.
+    \n# It's best to use the servers' private IPs for better performance and security.\n#
+    You can find the private IPs at your UpCloud control panel Network section.\n
+    \  upstream backend {\n      server frontend-service;\n   }\n\n   # This server
+    accepts all traffic to port 80 and passes it to the upstream. \n   # Notice that
+    the upstream name and the proxy_pass need to match.\n\n   server {\n      listen
+    80; \n\n      location / {\n          proxy_pass http://backend;\n      }\n   }\n"
+  nginx.conf: |+
+    # For more information on configuration, see:
+    #   * Official English Documentation: http://nginx.org/en/docs/
+    #   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+    user nginx;
+    worker_processes auto;
+    error_log /var/log/nginx/error.log;
+    pid /run/nginx.pid;
+
+    # Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+    include /usr/share/nginx/modules/*.conf;
+
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        sendfile            on;
+        tcp_nopush          on;
+        tcp_nodelay         on;
+        keepalive_timeout   65;
+        types_hash_max_size 2048;
+
+        include             /etc/nginx/mime.types;
+        default_type        application/octet-stream;
+
+        # Load modular configuration files from the /etc/nginx/conf.d directory.
+        # See http://nginx.org/en/docs/ngx_core_module.html#include
+        # for more information.
+        include /etc/nginx/conf.d/*.conf;
+
+    #    server {
+    #        listen       80 default_server;
+    #        listen       [::]:80 default_server;
+    #        server_name  _;
+    #        root         /usr/share/nginx/html;
+    #
+    #        # Load configuration files for the default server block.
+    #        include /etc/nginx/default.d/*.conf;
+    #
+    #        location / {
+    #        }
+    #
+    #        error_page 404 /404.html;
+    #            location = /40x.html {
+    #        }
+    #
+    #        error_page 500 502 503 504 /50x.html;
+    #            location = /50x.html {
+    #        }
+    #    }
+
+    # Settings for a TLS enabled server.
+    #
+    #    server {
+    #        listen       443 ssl http2 default_server;
+    #        listen       [::]:443 ssl http2 default_server;
+    #        server_name  _;
+    #        root         /usr/share/nginx/html;
+    #
+    #        ssl_certificate "/etc/pki/nginx/server.crt";
+    #        ssl_certificate_key "/etc/pki/nginx/private/server.key";
+    #        ssl_session_cache shared:SSL:1m;
+    #        ssl_session_timeout  10m;
+    #        ssl_ciphers PROFILE=SYSTEM;
+    #        ssl_prefer_server_ciphers on;
+    #
+    #        # Load configuration files for the default server block.
+    #        include /etc/nginx/default.d/*.conf;
+    #
+    #        location / {
+    #        }
+    #
+    #        error_page 404 /404.html;
+    #            location = /40x.html {
+    #        }
+    #
+    #        error_page 500 502 503 504 /50x.html;
+    #            location = /50x.html {
+    #        }
+    #    }
+
+    }
+
+  nginx.conf.default: "# For more information on configuration, see:\r\n#   * Official
+    English Documentation: http://nginx.org/en/docs/\r\n#   * Official Russian Documentation:
+    http://nginx.org/ru/docs/\r\n\r\nuser nginx;\r\nworker_processes auto;\r\nerror_log
+    /var/log/nginx/error.log;\r\npid /run/nginx.pid;\r\n\r\n# Load dynamic modules.
+    See /usr/share/doc/nginx/README.dynamic.\r\ninclude /usr/share/nginx/modules/*.conf;\r\n\r\nevents
+    {\r\n    worker_connections 1024;\r\n}\r\n\r\nhttp {\r\n    log_format  main  '$remote_addr
+    - $remote_user [$time_local] \"$request\" '\r\n                      '$status
+    $body_bytes_sent \"$http_referer\" '\r\n                      '\"$http_user_agent\"
+    \"$http_x_forwarded_for\"';\r\n\r\n    access_log  /var/log/nginx/access.log  main;\r\n\r\n
+    \   sendfile            on;\r\n    tcp_nopush          on;\r\n    tcp_nodelay
+    \        on;\r\n    keepalive_timeout   65;\r\n    types_hash_max_size 2048;\r\n\r\n
+    \   include             /etc/nginx/mime.types;\r\n    default_type        application/octet-stream;\r\n\r\n
+    \   # Load modular configuration files from the /etc/nginx/conf.d directory.\r\n
+    \   # See http://nginx.org/en/docs/ngx_core_module.html#include\r\n    # for more
+    information.\r\n    include /etc/nginx/conf.d/*.conf;\r\n\r\n    server {\r\n
+    \       listen       80 default_server;\r\n        listen       [::]:80 default_server;\r\n
+    \       server_name  _;\r\n        root         /usr/share/nginx/html;\r\n\r\n
+    \       # Load configuration files for the default server block.\r\n        include
+    /etc/nginx/default.d/*.conf;\r\n\r\n        location / {\r\n        }\r\n\r\n
+    \       error_page 404 /404.html;\r\n            location = /40x.html {\r\n        }\r\n\r\n
+    \       error_page 500 502 503 504 /50x.html;\r\n            location = /50x.html
+    {\r\n        }\r\n    }\r\n\r\n# Settings for a TLS enabled server.\r\n#\r\n#
+    \   server {\r\n#        listen       443 ssl http2 default_server;\r\n#        listen
+    \      [::]:443 ssl http2 default_server;\r\n#        server_name  _;\r\n#        root
+    \        /usr/share/nginx/html;\r\n#\r\n#        ssl_certificate \"/etc/pki/nginx/server.crt\";\r\n#
+    \       ssl_certificate_key \"/etc/pki/nginx/private/server.key\";\r\n#        ssl_session_cache
+    shared:SSL:1m;\r\n#        ssl_session_timeout  10m;\r\n#        ssl_ciphers PROFILE=SYSTEM;\r\n#
+    \       ssl_prefer_server_ciphers on;\r\n#\r\n#        # Load configuration files
+    for the default server block.\r\n#        include /etc/nginx/default.d/*.conf;\r\n#\r\n#
+    \       location / {\r\n#        }\r\n#\r\n#        error_page 404 /404.html;\r\n#
+    \           location = /40x.html {\r\n#        }\r\n#\r\n#        error_page 500
+    502 503 504 /50x.html;\r\n#            location = /50x.html {\r\n#        }\r\n#
+    \   }\r\n\r\n}\r\n\r\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2019-12-29T04:24:38Z"
+  name: confnginx
+  namespace: default
+  resourceVersion: "16877"
+  selfLink: /api/v1/namespaces/default/configmaps/confnginx
+  uid: 02aee0e8-ac71-4fdd-9130-cc883d0df0b3
+apiVersion: v1
+data:
+  nginx.conf: |+
+    # For more information on configuration, see:
+    #   * Official English Documentation: http://nginx.org/en/docs/
+    #   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+    user nginx;
+    worker_processes auto;
+    error_log /var/log/nginx/error.log;
+    pid /run/nginx.pid;
+
+    # Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+    include /usr/share/nginx/modules/*.conf;
+
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        sendfile            on;
+        tcp_nopush          on;
+        tcp_nodelay         on;
+        keepalive_timeout   65;
+        types_hash_max_size 2048;
+
+        include             /etc/nginx/mime.types;
+        default_type        application/octet-stream;
+
+        # Load modular configuration files from the /etc/nginx/conf.d directory.
+        # See http://nginx.org/en/docs/ngx_core_module.html#include
+        # for more information.
+        include /etc/nginx/conf.d/*.conf;
+
+    #    server {
+    #        listen       80 default_server;
+    #        listen       [::]:80 default_server;
+    #        server_name  _;
+    #        root         /usr/share/nginx/html;
+    #
+    #        # Load configuration files for the default server block.
+    #        include /etc/nginx/default.d/*.conf;
+    #
+    #        location / {
+    #        }
+    #
+    #        error_page 404 /404.html;
+    #            location = /40x.html {
+    #        }
+    #
+    #        error_page 500 502 503 504 /50x.html;
+    #            location = /50x.html {
+    #        }
+    #    }
+
+    # Settings for a TLS enabled server.
+    #
+    #    server {
+    #        listen       443 ssl http2 default_server;
+    #        listen       [::]:443 ssl http2 default_server;
+    #        server_name  _;
+    #        root         /usr/share/nginx/html;
+    #
+    #        ssl_certificate "/etc/pki/nginx/server.crt";
+    #        ssl_certificate_key "/etc/pki/nginx/private/server.key";
+    #        ssl_session_cache shared:SSL:1m;
+    #        ssl_session_timeout  10m;
+    #        ssl_ciphers PROFILE=SYSTEM;
+    #        ssl_prefer_server_ciphers on;
+    #
+    #        # Load configuration files for the default server block.
+    #        include /etc/nginx/default.d/*.conf;
+    #
+    #        location / {
+    #        }
+    #
+    #        error_page 404 /404.html;
+    #            location = /40x.html {
+    #        }
+    #
+    #        error_page 500 502 503 504 /50x.html;
+    #            location = /50x.html {
+    #        }
+    #    }
+
+    }
+
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2019-12-29T04:27:15Z"
+  name: confnginx
+  namespace: default
+  resourceVersion: "17220"
+  selfLink: /api/v1/namespaces/default/configmaps/confnginx
+  uid: 8c6a256d-c672-49a2-afa8-94bd04a1b5bb

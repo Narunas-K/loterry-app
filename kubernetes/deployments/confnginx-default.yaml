@@ -1,0 +1,28 @@
+apiVersion: v1
+data:
+  load-balancer.conf: "# Define which servers to include in the load balancing scheme.
+    \n# It's best to use the servers' private IPs for better performance and security.\n#
+    You can find the private IPs at your UpCloud control panel Network section.\n
+    \  upstream backend {\n      server frontend-service;\n   }\n\n   # This server
+    accepts all traffic to port 80 and passes it to the upstream. \n   # Notice that
+    the upstream name and the proxy_pass need to match.\n\n   server {\n      listen
+    80; \n\n      location / {\n          proxy_pass http://backend;\n      }\n   }\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2019-12-29T04:46:27Z"
+  name: confnginx-default
+  namespace: default
+  resourceVersion: "19831"
+  selfLink: /api/v1/namespaces/default/configmaps/confnginx-default
+  uid: 82bf2688-3a6b-4641-87d9-321082da0537
+apiVersion: v1
+data:
+  default.conf: ""
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2019-12-29T04:53:28Z"
+  name: confnginx-default
+  namespace: default
+  resourceVersion: "20827"
+  selfLink: /api/v1/namespaces/default/configmaps/confnginx-default
+  uid: 081bf458-a09f-4d59-904e-e3d64cc3f108
