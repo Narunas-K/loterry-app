@@ -17,9 +17,6 @@ spec:
         - name: check-frontend-ready
           image: curlimages/curl
           command: ['sh', '-c', 'until curl frontend-service; do echo waiting for fronted to come up; sleep 2; done;']
-        - name: check-initial-lb-down
-          image: curlimages/curl
-          command: ['sh', '-c', 'while curl lb-service-initial; do echo waiting for nginx to go down; sleep 2; done;']
         - name: check-lb-1-down
           image: curlimages/curl
           command: ['sh', '-c', 'sleep 20; while curl lb-1-service; do echo waiting for nginx to go down; sleep 2; done;']
