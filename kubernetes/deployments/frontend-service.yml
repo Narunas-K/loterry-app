@@ -6,7 +6,6 @@ metadata:
     name: fronted-service
     app: loterry-app
 spec:
-  type: NodePort
   selector:
     name: frontend-pod
     app: loterry-app
