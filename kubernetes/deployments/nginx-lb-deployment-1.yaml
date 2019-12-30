@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: nginx-lb-deployment-1
   labels:
     name: nginx
     app: loterry-app
@@ -10,8 +10,19 @@ spec:
     metadata:
       labels:
         app: loterry-app
-        name: nginx-pod
+        name: nginx-pod-lb-1
+        type: lb
     spec:
+      initContainers:
+        - name: check-frontend-ready
+          image: curlimages/curl
+          command: ['sh', '-c', 'until curl frontend-service; do echo waiting for fronted to come up; sleep 2; done;']
+        - name: check-initial-lb-down
+          image: curlimages/curl
+          command: ['sh', '-c', 'while curl lb-service-initial; do echo waiting for nginx to go down; sleep 2; done;']
+        - name: check-lb-2-down
+          image: curlimages/curl
+          command: ['sh', '-c', 'sleep 10; while curl lb-2-service; do echo waiting for nginx to go down; sleep 2; done;']
       containers:
         - name: nginx
           image: nginx:alpine
