@@ -1,32 +1,3 @@
-# import time
-# from redis import StrictRedis
-#
-# redisHost = "redis"
-# redisPort = 6379
-# redis = StrictRedis(host=redisHost, port=redisPort)
-#
-# def main():
-#     # Subscrive to redis keyspace events
-#     pubsub = redis.pubsub()
-#     pubsub.psubscribe('__keyspace@0__:*')
-#
-#     while True:
-#         message = pubsub.get_message()
-#         if message != None:
-#             print(message)
-#             try:
-#                 if str(message["data"])=="b'set'":
-#                     messageList = (message["channel"].decode("utf-8")).split(":")
-#
-#                     key = messageList[1]
-#                     print(redis.get(key))
-#                     print ("SET")
-#             except:
-#                 print ("Exception")
-#
-#
-# if __name__== "__main__":
-#   main()
 import zerorpc
 import psycopg2
 from redis import StrictRedis
@@ -45,14 +16,11 @@ password = "mysecretpassword"
 checkResultsQuery = "SELECT win, ammount_of_win from results WHERE ticket_id="
 newTicketInsertQuery = "INSERT INTO results (ticket_id, win, ammount_of_Win) VALUES"
 
-
-
 def writeToRedis (requestId, win, ammountOfWin):
     redis = StrictRedis(host=redisHost, port=redisPort)
     resultsList = [str(win), str(ammountOfWin)]
     redis.rpush (str(requestId), *resultsList)
     print ("Wrote to redis")
-
 
 def psqlGetData(ticketNumber):
     try:
@@ -139,8 +107,6 @@ def determineAmountOfWin():
     randomWin = random.randint(1,1000)
     return randomWin
 
-
-
 def returnNewTicket ():
     newTicketNumber = generateNewTicket ()
     resultsFromDb = psqlGetData (newTicketNumber)
@@ -156,8 +122,6 @@ def returnNewTicket ():
     psqlInsertData(newTicketNumber, isLucky, amountOfWin)
 
     return newTicketNumber
-
-
 
 class HelloRPC(object):
     def checkTicket(self, message):
@@ -179,8 +143,6 @@ class HelloRPC(object):
         print ("Message received: " + message)
         newTicketNumber = returnNewTicket()
         return newTicketNumber
-
-
 
 s = zerorpc.Server(HelloRPC())
 s.bind("tcp://0.0.0.0:4242")
